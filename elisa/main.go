@@ -11,18 +11,80 @@ package main
 import (
 	"fmt"
 	"os"
+	"strconv"
 
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/spf13/cobra"
+	"github.com/joho/godotenv"
 	"github.com/DennisSchulmeister/elisa/elisa/views/main_menu"
 )
 
-// Main function with BubbleTea boilerplate
-func main() {
-	m := main_menu.New()
-	p := tea.NewProgram(&m)
+const PROGRAM = "elisa"
+const VERSION = "0.0.1"
 
-    if _, err := p.Run(); err != nil {
-        fmt.Printf("Fehler: %v", err)
-        os.Exit(1)
-    }
+// Structure for the command line options
+type options struct {
+	debug	bool		// Log to debug.out
+	server	string		// Adress of the Elisa server
+}
+
+var Options options = options{}
+
+// Root command of the Corba library, which is used to parse the command line options.
+// This library supports the `program command -args` argument style. But we are using
+// an anonymous root command only, as currently we don't need sub-commands.
+var rootCommand = &cobra.Command{
+	Use:	PROGRAM,
+	Short:	"AI Programmiertutor*in für Studierende",
+	Long:	fmt.Sprintf(`%s %s – AI Programmiertutor*in für Studierende
+
+Elisa ist eine intelligente Lernhilfe für Studierende im Informatik-Studium. Sie beantwortet Fragen
+zu den Übungsaufgaben, zu deinem Quellcode und hilft dir bei den Übungsaufgaben. Das Studium hat sie
+schon seit ein paar Jahren abgeschlossen. Jetzt hilft sie dir dabei, dein Studium zu meistern.
+
+Elisa ist die Urenkel*in von Joseph Weizenbaums Eliza. Aktuell sind noch nicht alle Funktionen ausgereift.
+Es handelt sich um ein Experiment für Studierende an der DHBW Karlsruhe, das im Rahmen des Forschungsprojekts
+KoLLI durchgeführt wird. Fragen, Wünsche, Anregungen, Fehlermeldungen sind stets willkommen. Schicke hierzu
+einfach eine E-Mail an: dennis.schulmeister-zimolong@dhbw-karlsruhe.de
+`, PROGRAM, VERSION),
+
+	// Run the application
+	Run: func(cmd *cobra.Command, args[] string) {
+		// Read .env file
+		err := godotenv.Load()
+		if err != nil {panic(err)}
+
+		// Enable debug logs
+		if !Options.debug {
+			debug_, err := strconv.ParseBool(os.Getenv("DEBUG"))
+			if err == nil {Options.debug = debug_}
+		}
+
+		if Options.debug {
+			f, err := tea.LogToFile("debug.log", "debug")
+			if err != nil {panic(err)}
+			defer f.Close()
+		}
+
+		// Start TUI
+		m := main_menu.New(Options.server)
+		p := tea.NewProgram(&m)
+
+		if _, err := p.Run(); err != nil {
+			panic(err)
+		}
+	},
+}
+
+// Init function called by GoLang
+func init() {
+	rootCommand.Version = VERSION
+
+	rootCommand.PersistentFlags().BoolVarP(&Options.debug, "debug", "d", false, "Logausgaben in die Datei debug.log schreiben")
+	rootCommand.PersistentFlags().StringVarP(&Options.server, "server", "s", "https://elisa.zimolong.eu", "Adresse des Elisa-Servers")
+}
+
+// Main function called by GoLang
+func main() {
+	rootCommand.Execute()
 }

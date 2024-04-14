@@ -6,6 +6,12 @@
 elisa/elisa
 elisa-server/elisa-server
 
+# Debug logs
+*.log
+
+# .evn Files
+.env
+
 # Binaries for programs and plugins
 *.exe
 *.exe~

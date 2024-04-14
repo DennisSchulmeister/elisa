@@ -17,12 +17,15 @@ import (
 // on the exercise, to ask questions on the own source code or to have the AI LLM
 // rate the solution. Of course the application can be quit, too.
 type MainMenuModel struct {
-	quitting bool
+	server		string
+	quitting	bool
 }
 
 // Create new instance of the model to display the main menu on screen
-func New() MainMenuModel {
-	return MainMenuModel{}
+func New(server string) MainMenuModel {
+	return MainMenuModel{
+		server: server,
+	}
 }
 
 // Run initial command
