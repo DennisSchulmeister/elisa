@@ -21,11 +21,23 @@ type MainMenuModel struct {
 	quitting	bool
 }
 
-// Create new instance of the model to display the main menu on screen
+var model MainMenuModel;
+
+// Create new instance of the model to display the main menu on screen.
+// This should only ever be called in program start-up. In all other cases,
+// call `Get()` to return to the already existing instance.
 func New(server string) MainMenuModel {
-	return MainMenuModel{
+	model = MainMenuModel{
 		server: server,
 	}
+
+	return model
+}
+
+// Get already existing model to return to the main menu. Use this in all places except
+// for program start-up.
+func Get() MainMenuModel {
+	return model
 }
 
 // Run initial command

@@ -14,11 +14,31 @@ import (
 
 // Chat view where the user can ask questions about the exercise or the own source code
 // similar to the web UI of ChatGPT and similar AI chat bots.
-type ChatModel struct {}
+type ChatModel struct {
+	started	bool		// Chat has already been started
+}
 
-// Create new instance of the model to start a new chat and display it on screen
+var model ChatModel
+
+// Create new instance of the model to start a new chat and display it on screen.
+// Use this each time the user wants to start a new chat.
 func New() ChatModel {
-	return ChatModel{}
+	model = ChatModel{
+		started = true,
+	}
+
+	return model
+}
+
+// Get previously used model to return to an already started chat. Use this, each time
+// the user wants to return to the chat without restarting. Starts a new chat, if no
+// chat was already existing.
+func Get() ChatModel {
+	if !model.started {
+		return New()
+	}
+
+	return model
 }
 
 // Run initial command
