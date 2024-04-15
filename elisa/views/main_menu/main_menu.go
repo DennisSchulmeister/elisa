@@ -9,58 +9,76 @@
 package main_menu
 
 import (
+	"time"
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/DennisSchulmeister/elisa/elisa/utils/menu"
+	"github.com/DennisSchulmeister/elisa/elisa/views/goodbye"
 )
 
-// Main menu of the application that will be presented on when the program starts.
-// Here the use can choose to see the current exercise description, to ask questions
-// on the exercise, to ask questions on the own source code or to have the AI LLM
-// rate the solution. Of course the application can be quit, too.
-type MainMenuModel struct {
-	server		string
-	quitting	bool
+var mainMenu *menu.Menu
+
+var exitCommands []tea.Cmd = []tea.Cmd{
+	tea.Tick(time.Second, func(t time.Time) tea.Msg {
+		return tea.Quit()
+	}),
 }
 
-var model MainMenuModel;
-
-// Create new instance of the model to display the main menu on screen.
-// This should only ever be called in program start-up. In all other cases,
-// call `Get()` to return to the already existing instance.
-func New(server string) MainMenuModel {
-	model = MainMenuModel{
-		server: server,
+func GetMainMenu() *menu.Menu {
+	if mainMenu == nil {
+		mainMenu = menu.NewMenu(
+			menu.WithTitle("Hauptmenü"),
+			menu.WithItems([]menu.MenuItem {
+				menu.MenuItem{
+					Label:   "Aufgabenstellung anzeigen",
+					// Model: nil,
+					// Command: nil,
+				},
+				menu.MenuItem{
+					Label:   "Fragen zur Aufgabe stellen",
+					Disabled: true,
+					// Model: nil,
+					// Command: nil,
+				},
+				menu.MenuItem{
+					Label:   "Fragen zum Quellcode stellen",
+					Disabled: true,
+					// Model: nil,
+					// Command: nil,
+				},
+				menu.MenuItem{
+					Label:   "Quellcode bewerten lassen",
+					Disabled: true,
+					// Model: nil,
+					// Command: nil,
+				},
+				menu.MenuItem{
+					Separator: true,
+				},
+				menu.MenuItem{
+					Label:   "Hinweise zum Datenschutz",
+					Disabled: true,
+					// Model: nil,
+					// Command: nil,
+				},
+				menu.MenuItem{
+					Label:   "Feedback geben",
+					Disabled: true,
+					// Model: nil,
+					// Command: nil,
+				},
+				menu.MenuItem{
+					Separator: true,
+				},
+				menu.MenuItem{
+					Label:   "Programm beenden",
+					Model:   goodbye.NewGoodybeModel(),
+					Command: tea.Sequence(exitCommands...),
+				},
+			}),
+			menu.WithExitModel(goodbye.NewGoodybeModel()),
+			menu.WithExitCommands(exitCommands),
+		)
 	}
 
-	return model
-}
-
-// Get already existing model to return to the main menu. Use this in all places except
-// for program start-up.
-func Get() MainMenuModel {
-	return model
-}
-
-// Run initial command
-func (m MainMenuModel) Init() tea.Cmd {
-	return nil
-}
-
-// Process event messages
-func (m MainMenuModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-	switch msg := msg.(type) {
-	case tea.KeyMsg:
-		switch msg.String() {
-		case "ctrl+c", "q":
-			m.quitting = true
-			return m, tea.Quit
-		}
-	}
-
-	return m, nil
-}
-
-// Render view
-func (m MainMenuModel) View() string {
-	if m.quitting {return ""}
-	return "Hauptmenü\nDrücken Sie q zum Beenden"
+	return mainMenu
 }

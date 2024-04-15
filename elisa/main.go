@@ -67,8 +67,8 @@ einfach eine E-Mail an: dennis.schulmeister-zimolong@dhbw-karlsruhe.de
 		}
 
 		// Start TUI
-		m := main_menu.New(Options.server)
-		p := tea.NewProgram(&m)
+		m := main_menu.GetMainMenu()
+		p := tea.NewProgram(m)
 
 		if _, err := p.Run(); err != nil {
 			panic(err)

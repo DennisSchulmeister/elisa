@@ -22,7 +22,7 @@ var model ChatModel
 
 // Create new instance of the model to start a new chat and display it on screen.
 // Use this each time the user wants to start a new chat.
-func New() ChatModel {
+func NewChatModel() ChatModel {
 	model = ChatModel{
 		started = true,
 	}

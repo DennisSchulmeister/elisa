@@ -6,32 +6,31 @@
 // published by the Free Software Foundation, either version 3 of the
 // License, or (at your option) any later version.
 
-package select_files
+package goodbye
 
 import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
-// Temporary screen where the user can select one ore more files of the own source code
-// to include them in their dialouge with the AI LLM.
-type SelectFilesModel struct {}
+// Final goodbye screen when the program exits
+type GoodbyeModel struct {}
 
-// Create new instance of the model to show a file selection list on screen
-func NewSelectFilesModel() SelectFilesModel {
-	return SelectFilesModel{}
+// Create new instance of the goodbmodel to show a goodbye message
+func NewGoodybeModel() GoodbyeModel {
+	return GoodbyeModel{}
 }
 
 // Run initial command
-func (m SelectFilesModel) Init() tea.Cmd {
+func (m GoodbyeModel) Init() tea.Cmd {
 	return nil
 }
 
 // Process event messages
-func (m SelectFilesModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (m GoodbyeModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m, nil
 }
 
 // Render view
-func (m SelectFilesModel) View() string {
-	return "Dateien auswählen"
+func (m GoodbyeModel) View() string {
+	return "Auf Wiedersehen!"
 }
