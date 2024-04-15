@@ -19,6 +19,11 @@ import (
 	"github.com/DennisSchulmeister/elisa/elisa/views/main_menu"
 )
 
+// TODO: Show login screen first
+// TODO: Generic view model for markdown display (from file or string)
+// TODO: Display exercise view
+// TODO: Data protection notes view
+
 const PROGRAM = "elisa"
 const VERSION = "0.0.1"
 
