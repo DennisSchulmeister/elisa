@@ -56,8 +56,7 @@ einfach eine E-Mail an: dennis.schulmeister-zimolong@dhbw-karlsruhe.de
 	// Run the application
 	Run: func(cmd *cobra.Command, args[] string) {
 		// Read .env file
-		err := godotenv.Load()
-		if err != nil {panic(err)}
+		godotenv.Load()
 
 		// Enable debug logs
 		if !Options.debug {
