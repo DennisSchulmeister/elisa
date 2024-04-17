@@ -11,29 +11,29 @@ package ui
 import tea "github.com/charmbracelet/bubbletea"
 
 // The terminal screen width
-var Width  int = 0
+var Width int = 0
 
 // The terminal screen height
 var Height int = 0
 
 // Default message handler for all view screens. Handles messages like terminal
-// resizing or Ctrl+C to exit the application. Returns `nil, nil` in most cases,
+// resizing or Ctrl+C to exit the application. Returns nil, nil in most cases,
 // so that the caller may proceed as normal. But if anything else is returned,
 // the caller should return these, instead.
 func Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
-		case tea.WindowSizeMsg:
-			// Handle window resize
-			Width = msg.Width
-			Height = msg.Height
-		case tea.KeyMsg:
-			// Handle custom keys
-			keypress := msg.String()
+	case tea.WindowSizeMsg:
+		// Handle window resize
+		Width = msg.Width
+		Height = msg.Height
+	case tea.KeyMsg:
+		// Handle custom keys
+		keypress := msg.String()
 
-			if keypress == "ctrl+c" {
-				// Exit application immediately
-				return nil, tea.Quit
-			}
+		if keypress == "ctrl+c" {
+			// Exit application immediately
+			return nil, tea.Quit
+		}
 	}
 
 	return nil, nil

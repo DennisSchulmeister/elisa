@@ -16,7 +16,7 @@ import (
 )
 
 // Initial screen after program start-up. This reads the exercise description from
-// the file `elisa.yaml` and presents an input field where the course password can
+// the file elisa.yaml and presents an input field where the course password can
 // be entered to login on the server.
 type LoginModel struct {
 	welcomeMessage string
