@@ -13,7 +13,7 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/DennisSchulmeister/elisa/elisa/views/login"
+	"github.com/DennisSchulmeister/elisa/elisa/view/login"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/joho/godotenv"
 	"github.com/spf13/cobra"
@@ -24,8 +24,8 @@ const VERSION = "0.0.1"
 
 // Structure for the command line options
 type options struct {
-	debug	bool		// Log to debug.out
-	server	string		// Adress of the Elisa server
+	debug  bool   // Log to debug.out
+	server string // Adress of the Elisa server
 }
 
 var Options options = options{}
@@ -34,9 +34,9 @@ var Options options = options{}
 // This library supports the `program command -args` argument style. But we are using
 // an anonymous root command only, as currently we don't need sub-commands.
 var rootCommand = &cobra.Command{
-	Use:	PROGRAM,
-	Short:	"AI Programmiertutor*in für Studierende",
-	Long:	fmt.Sprintf(`%s %s – AI Programmiertutor*in für Studierende
+	Use:   PROGRAM,
+	Short: "AI Programmiertutor*in für Studierende",
+	Long: fmt.Sprintf(`%s %s – AI Programmiertutor*in für Studierende
 
 Elisa ist eine intelligente Lernhilfe für Studierende im Informatik-Studium. Sie beantwortet Fragen
 zu den Übungsaufgaben, zu deinem Quellcode und hilft dir bei den Übungsaufgaben. Das Studium hat sie
@@ -49,19 +49,23 @@ einfach eine E-Mail an: dennis.schulmeister-zimolong@dhbw-karlsruhe.de
 `, PROGRAM, VERSION),
 
 	// Run the application
-	Run: func(cmd *cobra.Command, args[] string) {
+	Run: func(cmd *cobra.Command, args []string) {
 		// Read .env file
 		godotenv.Load()
 
 		// Enable debug logs
 		if !Options.debug {
 			debug_, err := strconv.ParseBool(os.Getenv("DEBUG"))
-			if err == nil {Options.debug = debug_}
+			if err == nil {
+				Options.debug = debug_
+			}
 		}
 
 		if Options.debug {
 			f, err := tea.LogToFile("debug.log", "debug")
-			if err != nil {panic(err)}
+			if err != nil {
+				panic(err)
+			}
 			defer f.Close()
 		}
 

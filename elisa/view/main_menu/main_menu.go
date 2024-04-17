@@ -12,7 +12,7 @@ import (
 	"time"
 
 	"github.com/DennisSchulmeister/elisa/elisa/ui/menu"
-	"github.com/DennisSchulmeister/elisa/elisa/views/goodbye"
+	"github.com/DennisSchulmeister/elisa/elisa/view/goodbye"
 	tea "github.com/charmbracelet/bubbletea"
 )
 
@@ -28,26 +28,26 @@ func GetMainMenu() *menu.Menu {
 	if mainMenu == nil {
 		mainMenu = menu.NewMenu(
 			menu.WithTitle("Hauptmenü"),
-			menu.WithItems([]menu.MenuItem {
+			menu.WithItems([]menu.MenuItem{
 				menu.MenuItem{
-					Label:   "Aufgabenstellung anzeigen",
+					Label: "Aufgabenstellung anzeigen",
 					// Model: nil,
 					// Command: nil,
 				},
 				menu.MenuItem{
-					Label:   "Fragen zur Aufgabe stellen",
+					Label:    "Fragen zur Aufgabe stellen",
 					Disabled: true,
 					// Model: nil,
 					// Command: nil,
 				},
 				menu.MenuItem{
-					Label:   "Fragen zum Quellcode stellen",
+					Label:    "Fragen zum Quellcode stellen",
 					Disabled: true,
 					// Model: nil,
 					// Command: nil,
 				},
 				menu.MenuItem{
-					Label:   "Quellcode bewerten lassen",
+					Label:    "Quellcode bewerten lassen",
 					Disabled: true,
 					// Model: nil,
 					// Command: nil,
@@ -56,13 +56,13 @@ func GetMainMenu() *menu.Menu {
 					Separator: true,
 				},
 				menu.MenuItem{
-					Label:   "Hinweise zum Datenschutz",
+					Label:    "Hinweise zum Datenschutz",
 					Disabled: true,
 					// Model: nil,
 					// Command: nil,
 				},
 				menu.MenuItem{
-					Label:   "Feedback geben",
+					Label:    "Feedback geben",
 					Disabled: true,
 					// Model: nil,
 					// Command: nil,
