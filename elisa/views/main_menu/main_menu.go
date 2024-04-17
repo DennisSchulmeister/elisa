@@ -10,9 +10,10 @@ package main_menu
 
 import (
 	"time"
-	tea "github.com/charmbracelet/bubbletea"
-	"github.com/DennisSchulmeister/elisa/elisa/utils/menu"
+
+	"github.com/DennisSchulmeister/elisa/elisa/ui/menu"
 	"github.com/DennisSchulmeister/elisa/elisa/views/goodbye"
+	tea "github.com/charmbracelet/bubbletea"
 )
 
 var mainMenu *menu.Menu

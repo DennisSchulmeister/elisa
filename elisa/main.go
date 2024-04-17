@@ -13,16 +13,11 @@ import (
 	"os"
 	"strconv"
 
+	"github.com/DennisSchulmeister/elisa/elisa/views/login"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/spf13/cobra"
 	"github.com/joho/godotenv"
-	"github.com/DennisSchulmeister/elisa/elisa/views/main_menu"
+	"github.com/spf13/cobra"
 )
-
-// TODO: Show login screen first
-// TODO: Generic view model for markdown display (from file or string)
-// TODO: Display exercise view
-// TODO: Data protection notes view
 
 const PROGRAM = "elisa"
 const VERSION = "0.0.1"
@@ -71,7 +66,7 @@ einfach eine E-Mail an: dennis.schulmeister-zimolong@dhbw-karlsruhe.de
 		}
 
 		// Start TUI
-		m := main_menu.GetMainMenu()
+		m := login.NewLoginModel()
 		p := tea.NewProgram(m)
 
 		if _, err := p.Run(); err != nil {

@@ -9,19 +9,11 @@
 package login
 
 import (
-	"github.com/charmbracelet/bubbles/cursor"
+	"github.com/DennisSchulmeister/elisa/elisa/ui"
+	"github.com/DennisSchulmeister/elisa/elisa/views/main_menu"
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 )
-
-// TODO: Welcome message
-// TODO: Input field for server address (pre-filled)
-// TODO: Input field for course password
-// TODO: Login button
-// TODO: Exit button
-
-// TODO: Read elisa.yml file at startup, show warning if not found
-// TODO: Send qRPC request to server to check credentials
 
 // Initial screen after program start-up. This reads the exercise description from
 // the file `elisa.yaml` and presents an input field where the course password can
@@ -30,43 +22,65 @@ type LoginModel struct {
 	welcomeMessage string
 	ServerAddress  textinput.Model
 	CoursePassword textinput.Model
-	cursorMode     cursor.Mode
 }
 
 // Create new instance of the model to read the exercise and login on the server
 func NewLoginModel() LoginModel {
-	return LoginModel{
-		welcomeMessage: "Willkommen bei Elisa, der KI-Programmiertutorin für Studierende",
+	model := LoginModel{
+		welcomeMessage: "Willkommen bei Elisa",
 		ServerAddress: textinput.Model{
 			Placeholder: "Server-Adresse",
 			CharLimit:   255,
-			// Cursor.Style:
-			// PromptStype:
-			// TextStyle:
+			PromptStyle: ui.LabelStyle,
+			TextStyle:   ui.SelectedStyle,
 		},
 		CoursePassword: textinput.Model{
 			Placeholder:   "Kurs-Passwort",
 			CharLimit:     255,
 			EchoMode:      textinput.EchoPassword,
 			EchoCharacter: '•',
-			// Cursor.Style:
-			// PromptStype:
-			// TextStyle:
+			PromptStyle:   ui.LabelStyle,
+			TextStyle:     ui.SelectedStyle,
 		},
 	}
+
+	model.ServerAddress.Cursor.Style  = ui.CursorStyle
+	model.CoursePassword.Cursor.Style = ui.CursorStyle
+
+	return model
 }
 
 // Run initial command
-func (m LoginModel) Init() tea.Cmd {
-	return textinput.Blink
+func (login LoginModel) Init() tea.Cmd {
+	return tea.Sequence(tea.EnterAltScreen, textinput.Blink)
 }
 
 // Process event messages
-func (m LoginModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-	return m, nil
+func (login LoginModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	model, command := ui.Update(msg)
+	if model != nil || command != nil {return model, command}
+
+	switch msg := msg.(type) {
+		case tea.KeyMsg:
+			// Handle custom keys
+			keypress := msg.String()
+
+			if keypress == "q" || keypress == "esc" {
+				// Exit application
+				return login, tea.Quit
+			} else if keypress == "enter" {
+				// Go to main menu
+				mainMenu := main_menu.GetMainMenu()
+				return mainMenu, nil
+			}
+	}
+	
+	return login, nil
 }
 
 // Render view
-func (m LoginModel) View() string {
-	return "Login"
+func (login LoginModel) View() string {
+	result := ui.ScreenTitleStyle.Render(login.welcomeMessage) + "\n\n"
+	result += "TEST TEST TEST"
+	return result
 }

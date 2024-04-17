@@ -9,6 +9,7 @@
 package chat
 
 import (
+	"github.com/DennisSchulmeister/elisa/elisa/ui"
 	tea "github.com/charmbracelet/bubbletea"
 )
 
@@ -24,7 +25,7 @@ var model ChatModel
 // Use this each time the user wants to start a new chat.
 func NewChatModel() ChatModel {
 	model = ChatModel{
-		started = true,
+		started: true,
 	}
 
 	return model
@@ -35,23 +36,26 @@ func NewChatModel() ChatModel {
 // chat was already existing.
 func Get() ChatModel {
 	if !model.started {
-		return New()
+		return NewChatModel()
 	}
 
 	return model
 }
 
 // Run initial command
-func (m ChatModel) Init() tea.Cmd {
+func (chat ChatModel) Init() tea.Cmd {
 	return nil
 }
 
 // Process event messages
-func (m ChatModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-	return m, nil
+func (chat ChatModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	model, command := ui.Update(msg)
+	if model != nil || command != nil {return model, command}
+	
+	return chat, nil
 }
 
 // Render view
-func (m ChatModel) View() string {
+func (chat ChatModel) View() string {
 	return "Chat"
 }

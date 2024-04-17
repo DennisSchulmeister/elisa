@@ -9,12 +9,11 @@
 package menu
 
 import (
-	tea "github.com/charmbracelet/bubbletea"
+	"github.com/DennisSchulmeister/elisa/elisa/ui"
 	"github.com/charmbracelet/bubbles/list"
+	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 )
-
-var docStyle = lipgloss.NewStyle()
 
 // Selection menu
 type Menu struct {
@@ -44,10 +43,9 @@ func NewMenu(options ...MenuOption) *Menu {
 		ChosenIndex:       -1,
 		ExitCommands: 	   []tea.Cmd{tea.Quit},
 
-		// For color codes see: https://github.com/fidian/ansi
-		ItemStyleLabel:    lipgloss.NewStyle(),
-		ItemStyleSelected: lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("170")),
-		ItemStyleDisabled: lipgloss.NewStyle().Foreground(lipgloss.Color("244")),
+		ItemStyleLabel:    ui.LabelStyle,
+		ItemStyleSelected: ui.SelectedStyle,
+		ItemStyleDisabled: ui.DisabledStyle,
 	}
 
 	for _, option := range options {
@@ -67,8 +65,9 @@ func NewMenu(options ...MenuOption) *Menu {
 	}
 
 	menu.list = list.New(listItems, MenuItemDelegate{}, 0, 0)
+	menu.list.SetShowTitle(false)
 	menu.list.SetShowStatusBar(false)
-	menu.list.Title = menu.Title
+	menu.list.SetSize(ui.Width, ui.Height)
 
 	return menu
 }
@@ -120,16 +119,17 @@ func (menu Menu) Init() tea.Cmd {
 
 // Process event messages
 func (menu Menu) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	model, command := ui.Update(msg)
+	if model != nil || command != nil {return model, command}
+
+	menu.list.SetSize(ui.Width, ui.Height)
+
 	switch msg := msg.(type) {
-		case tea.WindowSizeMsg:
-			// Handle window resize
-			h, v := docStyle.GetFrameSize()
-			menu.list.SetSize(msg.Width-h, msg.Height-v)
 		case tea.KeyMsg:
 			// Handle custom keys
 			keypress := msg.String()
 
-			if keypress == "q" || keypress == "ctrl+c" || keypress == "esc" {
+			if keypress == "q" || keypress == "esc" {
 				// Exit menu
 				return menu.ExitModel, tea.Sequence(menu.ExitCommands...)
 			} else if keypress == "enter" {
@@ -188,5 +188,7 @@ func (menu Menu) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 // Render menu
 func (menu Menu) View() string {
-	return menu.list.View()
+	result := ui.ScreenTitleStyle.Render(menu.Title) + "\n"
+	result += menu.list.View()
+	return result
 }

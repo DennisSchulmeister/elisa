@@ -9,6 +9,7 @@
 package goodbye
 
 import (
+	"github.com/DennisSchulmeister/elisa/elisa/ui"
 	tea "github.com/charmbracelet/bubbletea"
 )
 
@@ -21,16 +22,19 @@ func NewGoodybeModel() GoodbyeModel {
 }
 
 // Run initial command
-func (m GoodbyeModel) Init() tea.Cmd {
+func (goodbye GoodbyeModel) Init() tea.Cmd {
 	return nil
 }
 
 // Process event messages
-func (m GoodbyeModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-	return m, nil
+func (goodbye GoodbyeModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	model, command := ui.Update(msg)
+	if model != nil || command != nil {return model, command}
+
+	return goodbye, nil
 }
 
 // Render view
-func (m GoodbyeModel) View() string {
+func (goodbye GoodbyeModel) View() string {
 	return "Auf Wiedersehen!"
 }
