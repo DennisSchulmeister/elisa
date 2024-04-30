@@ -13,14 +13,12 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/DennisSchulmeister/elisa/elisa/view/login"
+	"github.com/DennisSchulmeister/elisa/elisa/global"
+	"github.com/DennisSchulmeister/elisa/elisa/page/login"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/joho/godotenv"
 	"github.com/spf13/cobra"
 )
-
-const PROGRAM = "elisa"
-const VERSION = "0.0.1"
 
 // Structure for the command line options
 type options struct {
@@ -34,7 +32,7 @@ var Options options = options{}
 // This library supports the program command -args argument style. But we are using
 // an anonymous root command only, as currently we don't need sub-commands.
 var rootCommand = &cobra.Command{
-	Use:   PROGRAM,
+	Use:   global.PROGRAM,
 	Short: "AI Programmiertutor*in für Studierende",
 	Long: fmt.Sprintf(`%s %s – AI Programmiertutor*in für Studierende
 
@@ -45,7 +43,7 @@ schon seit ein paar Jahren abgeschlossen. Jetzt hilft sie dir dabei, dein Studiu
 Elisa ist die Urenkel*in von Joseph Weizenbaums Eliza. Aktuell sind noch nicht alle Funktionen ausgereift.
 Es handelt sich um ein Experiment für Studierende an der DHBW Karlsruhe, das im Rahmen des Forschungsprojekts
 KoLLI durchgeführt wird. Fragen, Wünsche, Anregungen, Fehlermeldungen sind stets willkommen. Schicke hierzu
-einfach eine E-Mail an: dennis.schulmeister-zimolong@dhbw-karlsruhe.de`, PROGRAM, VERSION),
+einfach eine E-Mail an: dennis.schulmeister-zimolong@dhbw-karlsruhe.de`, global.PROGRAM, global.VERSION),
 
 	// Run the application
 	Run: func(cmd *cobra.Command, args []string) {
@@ -80,7 +78,7 @@ einfach eine E-Mail an: dennis.schulmeister-zimolong@dhbw-karlsruhe.de`, PROGRAM
 
 // Init function called by GoLang
 func init() {
-	rootCommand.Version = VERSION
+	rootCommand.Version = global.VERSION
 
 	rootCommand.PersistentFlags().BoolVarP(&Options.debug, "debug", "d", false, "Logausgaben in die Datei debug.log schreiben")
 	rootCommand.PersistentFlags().StringVarP(&Options.server, "server", "s", "https://elisa.zimolong.eu", "Adresse des Elisa-Servers")

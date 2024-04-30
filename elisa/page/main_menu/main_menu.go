@@ -11,8 +11,8 @@ package main_menu
 import (
 	"time"
 
+	"github.com/DennisSchulmeister/elisa/elisa/page/goodbye"
 	"github.com/DennisSchulmeister/elisa/elisa/ui/menu"
-	"github.com/DennisSchulmeister/elisa/elisa/view/goodbye"
 	tea "github.com/charmbracelet/bubbletea"
 )
 

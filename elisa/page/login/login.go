@@ -9,8 +9,8 @@
 package login
 
 import (
+	"github.com/DennisSchulmeister/elisa/elisa/page/main_menu"
 	"github.com/DennisSchulmeister/elisa/elisa/ui"
-	"github.com/DennisSchulmeister/elisa/elisa/view/main_menu"
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -19,6 +19,7 @@ import (
 // the file elisa.yaml and presents an input field where the course password can
 // be entered to login on the server.
 type LoginModel struct {
+	page           ui.Page
 	welcomeMessage string
 	ServerAddress  textinput.Model
 	CoursePassword textinput.Model
@@ -43,6 +44,10 @@ func NewLoginModel() LoginModel {
 			TextStyle:     ui.SelectedStyle,
 		},
 	}
+
+	model.page.Title   = "Login"
+	model.page.Footer  = []string{"TEST1", "TEST2", "TEST3"}
+	model.page.Message = "Anmeldedaten erhalten Sie von ihre*r Dozent*in"
 
 	model.ServerAddress.Cursor.Style = ui.CursorStyle
 	model.CoursePassword.Cursor.Style = ui.CursorStyle
@@ -82,7 +87,12 @@ func (login LoginModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 // Render view
 func (login LoginModel) View() string {
-	result := ui.ScreenTitleStyle.Render(login.welcomeMessage) + "\n\n"
-	result += "TEST TEST TEST"
+	main := login.welcomeMessage + "\n\n"
+	main += "TEST TEST TEST"
+
+	result := login.page.ViewHeader()
+	result += login.page.ViewMain(main, true, true)
+	result += login.page.ViewFooter()
+
 	return result
 }

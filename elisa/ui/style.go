@@ -11,11 +11,15 @@ package ui
 import "github.com/charmbracelet/lipgloss"
 
 // For color codes see: https://github.com/fidian/ansi
-var ScreenTitleStyle  lipgloss.Style = lipgloss.NewStyle().Background(lipgloss.Color("25")).Foreground(lipgloss.Color("15"))
-var ScreenFooterStyle lipgloss.Style = lipgloss.NewStyle().BorderStyle(lipgloss.RoundedBorder())
-var LabelStyle        lipgloss.Style = lipgloss.NewStyle()
-var DisabledStyle     lipgloss.Style = lipgloss.NewStyle().Foreground(lipgloss.Color("253"))
-var SelectedStyle     lipgloss.Style = lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("170"))
-var BlurredStyle      lipgloss.Style = lipgloss.NewStyle().Foreground(lipgloss.Color("61"))
-var CursorStyle       lipgloss.Style = lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("170"))
-var HelpStyle         lipgloss.Style = lipgloss.NewStyle().Foreground(lipgloss.Color("240"))
+var PageTitleBgStyle    lipgloss.Style = lipgloss.NewStyle().Background(lipgloss.Color("18")).Foreground(lipgloss.Color("15"))
+var PageTitleLabelStyle lipgloss.Style = lipgloss.NewStyle().Background(lipgloss.Color("25")).Foreground(lipgloss.Color("15"))
+var PageFooterMsgStyle  lipgloss.Style = lipgloss.NewStyle().Background(lipgloss.Color("16")).Foreground(lipgloss.Color("15"))
+var PageFooterFieldStyle lipgloss.Style = lipgloss.NewStyle().Background(lipgloss.Color("31")).Foreground(lipgloss.Color("7"))
+var PageFooterKeyStyle = PageTitleBgStyle.Copy()
+
+var LabelStyle          lipgloss.Style = lipgloss.NewStyle()
+var DisabledStyle       lipgloss.Style = lipgloss.NewStyle().Foreground(lipgloss.Color("253"))
+var SelectedStyle       lipgloss.Style = lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("170"))
+var BlurredStyle        lipgloss.Style = lipgloss.NewStyle().Foreground(lipgloss.Color("61"))
+var CursorStyle         lipgloss.Style = lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("170"))
+var HelpStyle           lipgloss.Style = lipgloss.NewStyle().Foreground(lipgloss.Color("240"))

@@ -16,6 +16,7 @@ import (
 )
 
 // Selection menu
+// TODO: Should use the new Page type
 type Menu struct {
 	Title             string         // Menu title
 	items             []MenuItem     // Menu items
@@ -194,7 +195,7 @@ func (menu Menu) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 // Render menu
 func (menu Menu) View() string {
-	result := ui.ScreenTitleStyle.Render(menu.Title) + "\n"
+	result := ui.PageTitleLabelStyle.Render(menu.Title) + "\n"
 	result += menu.list.View()
 	return result
 }
