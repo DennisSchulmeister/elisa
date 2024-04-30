@@ -36,7 +36,7 @@ var Options options = options{}
 var rootCommand = &cobra.Command{
 	Use:   PROGRAM,
 	Short: "AI Programmiertutor*in für Studierende",
-	Long: fmt.Sprintf(%s %s – AI Programmiertutor*in für Studierende
+	Long: fmt.Sprintf(`%s %s – AI Programmiertutor*in für Studierende
 
 Elisa ist eine intelligente Lernhilfe für Studierende im Informatik-Studium. Sie beantwortet Fragen
 zu den Übungsaufgaben, zu deinem Quellcode und hilft dir bei den Übungsaufgaben. Das Studium hat sie
@@ -45,8 +45,7 @@ schon seit ein paar Jahren abgeschlossen. Jetzt hilft sie dir dabei, dein Studiu
 Elisa ist die Urenkel*in von Joseph Weizenbaums Eliza. Aktuell sind noch nicht alle Funktionen ausgereift.
 Es handelt sich um ein Experiment für Studierende an der DHBW Karlsruhe, das im Rahmen des Forschungsprojekts
 KoLLI durchgeführt wird. Fragen, Wünsche, Anregungen, Fehlermeldungen sind stets willkommen. Schicke hierzu
-einfach eine E-Mail an: dennis.schulmeister-zimolong@dhbw-karlsruhe.de
-, PROGRAM, VERSION),
+einfach eine E-Mail an: dennis.schulmeister-zimolong@dhbw-karlsruhe.de`, PROGRAM, VERSION),
 
 	// Run the application
 	Run: func(cmd *cobra.Command, args []string) {
