@@ -11,7 +11,7 @@ package ui
 import "github.com/charmbracelet/lipgloss"
 
 // For color codes see: https://github.com/fidian/ansi
-var ScreenTitleStyle lipgloss.Style  = lipgloss.NewStyle().Background(lipgloss.Color("25")).Foreground(lipgloss.Color("15"))
+var ScreenTitleStyle  lipgloss.Style = lipgloss.NewStyle().Background(lipgloss.Color("25")).Foreground(lipgloss.Color("15"))
 var ScreenFooterStyle lipgloss.Style = lipgloss.NewStyle().BorderStyle(lipgloss.RoundedBorder())
 var LabelStyle        lipgloss.Style = lipgloss.NewStyle()
 var DisabledStyle     lipgloss.Style = lipgloss.NewStyle().Foreground(lipgloss.Color("253"))

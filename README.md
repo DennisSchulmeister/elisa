@@ -69,6 +69,29 @@ one of the source directories:
 Note that you don't need to use `get get` to fetch external packages. Simply use them in the
 code and run `go mod tidy` each time a new package is added.
 
+### VS Code: Disable Format on Save
+
+One thing, that I find rather annoying, is that Visual Studio Code by default formats the
+source code every time a file is saved. Unfortunately the Go community has a rather strict
+imagination of how "canonical" source code should be formatted, most of which is actually
+quite sensible. However, there are occasional exceptions, where I would deliberately format
+my code differently. And since I am the same stringent, without using an auto-formatter, I
+find it rather annoying, when my Code suddenly gets formatted differently.
+
+Therefor, please see the following blog post: [Format on Save in Go with Code](https://blog.boot.dev/golang/format-on-save-vs-code-golang/).
+Even though the author argues differently (he doesn't like to think about Code formatting),
+it also shows, how to disable the auto-formatting for Go files in Visual Studio Code.
+It boils down to the following lines in your `settings.json`:
+
+```json
+    "[go]": {
+        "editor.formatOnSave": false
+    },
+    "[go.mod]": {
+        "editor.formatOnSave": false
+    }
+```
+
 Build
 -----
 

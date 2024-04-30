@@ -17,18 +17,18 @@ import (
 
 // Selection menu
 type Menu struct {
-	Title				string				// Menu title
-	items               []MenuItem			// Menu items
-	list				list.Model			// BubbleTea list widget
-	SelectionHand       string				// Prefix for selected items
-	SelectedIndex		int					// Value of currently selected item
-	prevSelectedIndex	int					// Value of previously selected item
-	ChosenIndex			int					// Value of actually chosen item
-	ExitModel           tea.Model           // View model to show after exiting the menu
-	ExitCommands        []tea.Cmd			// Command to execute to exit the menu
-	ItemStyleLabel		lipgloss.Style		// Style to render the items label
-	ItemStyleDisabled	lipgloss.Style		// Style to render disabled items
-	ItemStyleSelected   lipgloss.Style		// Style to render selected items
+	Title             string         // Menu title
+	items             []MenuItem     // Menu items
+	list              list.Model     // BubbleTea list widget
+	SelectionHand     string         // Prefix for selected items
+	SelectedIndex     int            // Value of currently selected item
+	prevSelectedIndex int            // Value of previously selected item
+	ChosenIndex       int            // Value of actually chosen item
+	ExitModel         tea.Model      // View model to show after exiting the menu
+	ExitCommands      []tea.Cmd      // Command to execute to exit the menu
+	ItemStyleLabel    lipgloss.Style // Style to render the items label
+	ItemStyleDisabled lipgloss.Style // Style to render disabled items
+	ItemStyleSelected lipgloss.Style // Style to render selected items
 }
 
 type MenuOption func(m *Menu)
@@ -41,7 +41,7 @@ func NewMenu(options ...MenuOption) *Menu {
 		SelectedIndex:     -1,
 		prevSelectedIndex: -1,
 		ChosenIndex:       -1,
-		ExitCommands: 	   []tea.Cmd{tea.Quit},
+		ExitCommands:      []tea.Cmd{tea.Quit},
 
 		ItemStyleLabel:    ui.LabelStyle,
 		ItemStyleSelected: ui.SelectedStyle,
@@ -51,7 +51,7 @@ func NewMenu(options ...MenuOption) *Menu {
 	for _, option := range options {
 		option(menu)
 	}
-	
+
 	var listItems []list.Item
 
 	for i, item := range menu.items {
@@ -120,31 +120,37 @@ func (menu Menu) Init() tea.Cmd {
 // Process event messages
 func (menu Menu) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	model, command := ui.Update(msg)
-	if model != nil || command != nil {return model, command}
+	if model != nil || command != nil {
+		return model, command
+	}
 
 	menu.list.SetSize(ui.Width, ui.Height)
 
 	switch msg := msg.(type) {
-		case tea.KeyMsg:
-			// Handle custom keys
-			keypress := msg.String()
+	case tea.KeyMsg:
+		// Handle custom keys
+		keypress := msg.String()
 
-			if keypress == "q" || keypress == "esc" {
-				// Exit menu
-				return menu.ExitModel, tea.Sequence(menu.ExitCommands...)
-			} else if keypress == "enter" {
-				// Choose and execute item
-				menu.ChosenIndex = menu.SelectedIndex
-				item := menu.items[menu.SelectedIndex]
+		if keypress == "q" || keypress == "esc" {
+			// Exit menu
+			return menu.ExitModel, tea.Sequence(menu.ExitCommands...)
+		} else if keypress == "enter" {
+			// Choose and execute item
+			menu.ChosenIndex = menu.SelectedIndex
+			item := menu.items[menu.SelectedIndex]
 
-				var _model tea.Model = menu
-				var _command tea.Cmd = nil
+			var _model tea.Model = menu
+			var _command tea.Cmd = nil
 
-				if item.Model   != nil { _model = item.Model }
-				if item.Command != nil { _command = item.Command }
-
-				return _model, _command
+			if item.Model != nil {
+				_model = item.Model
 			}
+			if item.Command != nil {
+				_command = item.Command
+			}
+
+			return _model, _command
+		}
 	}
 
 	// Delegate messages to list widget
@@ -165,7 +171,7 @@ func (menu Menu) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		if menu.SelectedIndex < 0 {
 			menu.SelectedIndex = 0
 			break
-		} else if menu.SelectedIndex > len(menu.items) - 1 {
+		} else if menu.SelectedIndex > len(menu.items)-1 {
 			menu.SelectedIndex = len(menu.items) - 1
 			break
 		}
