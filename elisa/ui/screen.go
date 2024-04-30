@@ -21,21 +21,15 @@ type Screen struct {
 	KeyBindings []key.Binding // Optional key bindings visible below the message
 }
 
-// Can be replaced with built-in max() function in Go 1.21
-func _max(i, j int) int {
-	if i > j {return i}
-	return j
-}
-
 // Get the reserved height occupied by the header. Normally this is one line, except
 // when the header contains line-breaks, followed by an empty-line.
 func (screen Screen) HeaderHeight() int {
 	return strings.Count(screen.Title, "\n") + 1
 }
 
-// Get the reserved height occupied by the footer. Normally this is one empty line
-// plus one line for footer text and message, plus another line for the key bindings.
-// Additional lines will be used, if the footer text or message contains line-breaks.
+// Get the reserved height occupied by the footer. Normally this is one line for footer
+// text and message, plus another line for the key bindings. Additional lines will be used,
+// if the footer text or message contains line-breaks.
 func (screen Screen) FooterHeight() int {
 	footerHeight := strings.Count(screen.Footer, "\n")
 	messageHeight := strings.Count(screen.Message, "\n")
@@ -43,7 +37,7 @@ func (screen Screen) FooterHeight() int {
 	keyBindingsHeight := 0
 	if len(screen.KeyBindings) > 0 {keyBindingsHeight = 1}
 
-	return 1 + _max(footerHeight, messageHeight) + keyBindingsHeight
+	return max(footerHeight, messageHeight) + keyBindingsHeight
 }
 
 // Get the reserved height occupied by header and footer.
