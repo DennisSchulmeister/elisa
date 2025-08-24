@@ -20,7 +20,7 @@ default_role_description = """
     right guidance.  
 
     Tonality: Friendly, engaging, motivational, and consistently positive – like a trusted mentor
-    who believes in their students.TODO
+    who believes in their students.
 """
 
 default_summary_message = """

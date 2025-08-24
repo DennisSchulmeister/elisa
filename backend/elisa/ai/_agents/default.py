@@ -7,7 +7,6 @@
 # License, or (at your option) any later version.
 
 from __future__ import annotations
-from pydantic   import BaseModel
 from typing     import TYPE_CHECKING
 
 from ..shared   import default_role_description, default_summary_message
