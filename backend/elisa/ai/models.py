@@ -198,6 +198,9 @@ ActivityId = str
 ActivityStatus = Literal["created", "running", "paused", "finished"]
 """Current status of an activity """
 
+Origin = Literal["user", "agent"]
+"""Which side caused an action or update"""
+
 class ActivityState(BaseModel):
     """
     Shared state of an interactive activity.

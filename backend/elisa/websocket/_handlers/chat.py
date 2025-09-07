@@ -95,7 +95,7 @@ class ChatHandler(ChatAgentCallback):
         Start or resume an interactive activity.
         """
         if self._assistant:
-            await self._assistant.start_activity(start.id)
+            await self._assistant.start_activity(start.id, user, "user")
     
     @handle_message("activity_update", ActivityUpdate)
     async def handle_activity_update(self, update: ActivityUpdate, user: User, **kwargs):
@@ -103,7 +103,7 @@ class ChatHandler(ChatAgentCallback):
         Send activity update to the owning AI agent after modification by the user.
         """
         if self._assistant:
-            await self._assistant.propagate_activity_update(update)
+            await self._assistant.propagate_activity_update(update, user, "user")
 
     @handle_message("change_language", ChangeLanguage)
     async def handle_change_language(self, change: ChangeLanguage, **kwargs):

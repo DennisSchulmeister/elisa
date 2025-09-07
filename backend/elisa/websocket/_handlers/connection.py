@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 @websocket_handler
 class ConnectionHandler:
     """
-    Websocket message handler for crash reports and stack traces.
+    Websocket message handler to test the connection.
     """
     
     def __init__(self, parent: ParentWebsocketHandler):

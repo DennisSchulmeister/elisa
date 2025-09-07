@@ -12,14 +12,13 @@ from pydantic   import BaseModel
 from typing     import Generic, TypeVar, TYPE_CHECKING
 
 from ..shared   import ReadConfigMixin
-from .models    import ActivityUpdate, AgentCode, AgentUpdate
+from .models    import ActivityUpdate, AgentCode, AgentUpdate, Origin
 
 if TYPE_CHECKING:
     from typing      import Callable
     from ..auth.user import User
     from .assistant  import AIAssistant
     from .models     import UserChatMessage
-
 
 class Stateless(BaseModel):
     """
@@ -157,7 +156,7 @@ class AgentBase(ABC, Generic[State], ReadConfigMixin):
             ),
         )
     
-    async def update_activity(self, path: str, value):
+    async def update_activity(self, path: str, value, user: User):
         """
         Update the current activity's shared state, similar to how the agent's state is updated.
         Again, use this instead of directly modifying the activity state to make sure that the
@@ -166,6 +165,7 @@ class AgentBase(ABC, Generic[State], ReadConfigMixin):
         Parameters:
             path: Property to change (with dot and array notation, e.g. `"questions.answers[0]"`)
             value: New value or None to delete the value
+            user: Authorized user
         
         Notes:
             * Deleting an array index removes the element from the array (e.g. `"menu.choices[1]"`).
@@ -186,12 +186,23 @@ class AgentBase(ABC, Generic[State], ReadConfigMixin):
             raise TypeError(f"Agent {self.code} cannot update activities by agent {self._assistant.current_activity.agent}")
     
         await self._assistant.propagate_activity_update(
-            ActivityUpdate(
+            user   = user,
+            origin = "agent",
+            update = ActivityUpdate(
                 id     = self._assistant.current_activity.id,
                 path   = path,
                 value  = value,
             ),
         )
+    
+    async def process_activity_update(self, update: ActivityUpdate, user: User, origin: Origin):
+        """
+        Run custom logic after an activity update, e.g. to respond to a change made by the user.
+        Note, that you need to check the `origin` parameter to distinguish updates by the user
+        from your own updates. One action could be to stream a message to the user to further
+        mutate the activity state (using `update_activity()` as usual).
+        """
+        pass
 
 class PersonaBase(Generic[Agent]):
     """

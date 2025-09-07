@@ -20,9 +20,9 @@ if TYPE_CHECKING:
     from ..auth.user import User
     from ._agent     import AgentBase
     from .models     import ActivityId, ActivityState, ActivityUpdate, AgentCode, AgentUpdate
-    from .models     import AssistantChatMessage, ChatKey, ChatMessage, ConversationMemory, MemoryUpdate
-    from .models     import PersistedState, PersistenceStrategy, SpeakMessageContent, SystemMessageContent
-    from .models     import UserChatMessage
+    from .models     import AssistantChatMessage, ChatKey, ChatMessage, ConversationMemory
+    from .models     import MemoryUpdate, Origin, PersistedState, PersistenceStrategy
+    from .models     import SpeakMessageContent, SystemMessageContent, UserChatMessage
 
 class AIAssistant:
     """
@@ -284,28 +284,38 @@ class AIAssistant:
     # Propagation of state updates
     #=============================
 
-    async def create_activity(self, activity: ActivityState):
+    async def create_activity(self, activity: ActivityState, user: User, origin: Origin):
         """
-        Add a new interactive activity, possibly created by the LLM.
+        Add a new interactive activity, possibly created by the LLM.  Called by the agent
+        running the activity, typically while handling user input.
         """
-        await self.propagate_activity_update(ActivityUpdate(
-            id    = activity.id,
-            path  = "",
-            value = activity
-        ))
+        await self.propagate_activity_update(
+            user   = user,
+            origin = origin,
+            update = ActivityUpdate(
+                id    = activity.id,
+                path  = "",
+                value = activity,
+            ),
+        )
 
-    async def start_activity(self, activity_id: ActivityId):
+    async def start_activity(self, activity_id: ActivityId, user: User, origin: Origin):
         """
         Start or resume an interactive activity. The activity must already exist, meaning it
         must already have been created by calling `propagate_activity_update()` with an update
-        object that contains the initial activity state and no path.
+        object that contains the initial activity state and no path. Called by either the agent
+        or the client.
         """
         if self.current_activity and self.current_activity.status == "running":
-            await self.propagate_activity_update(ActivityUpdate(
-                id    = self.current_activity.id,
-                path  = "status",
-                value = "paused"
-            ))
+            await self.propagate_activity_update(
+                user   = user,
+                origin = origin,
+                update = ActivityUpdate(
+                    id    = self.current_activity.id,
+                    path  = "status",
+                    value = "paused",
+                ),
+            )
         
         try:
             self.current_activity = self.state.activities[activity_id]
@@ -313,16 +323,21 @@ class AIAssistant:
             return
     
         if self.current_activity:
-            await self.propagate_activity_update(ActivityUpdate(
-                id    = self.current_activity.id,
-                path  = "status",
-                value = "running"
-            ))
+            await self.propagate_activity_update(
+                user   = user,
+                origin = origin,
+                update = ActivityUpdate(
+                    id    = self.current_activity.id,
+                    path  = "status",
+                    value = "running",
+                ),
+            )
 
-    async def propagate_activity_update(self, update: ActivityUpdate):
+    async def propagate_activity_update(self, update: ActivityUpdate, user: User, origin: Origin):
         """
         Distribute and process an update to the current activity's state. This mutates the
-        activity state in memory and persists the change.
+        activity state in memory and persists the change. Typically called by the agent running
+        the activity, but it can also by called by the client.
         
         Note:
             To insert a new activity call `create_activity()`. Internally it propagates an
@@ -345,11 +360,17 @@ class AIAssistant:
 
         if self.persistence_client:
             await self._callback.send_activity_update(update)
+        
+        # Callback agent to allow custom logic after an activity update
+        agent = self.agents[activity.agent]
+
+        if agent:
+            await agent.process_activity_update(update, user, origin)
 
     async def propagate_agent_update(self, update: AgentUpdate):
         """
         Distribute and process and update to an agent's state. This mutates the agent state
-        in memory and persists the change.
+        in memory and persists the change. Called by the agent while handling user input.
         """
         agent = self.agents[update.agent]
 
