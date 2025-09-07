@@ -12,13 +12,13 @@ from pydantic   import BaseModel
 from typing     import Generic, TypeVar, TYPE_CHECKING
 
 from ..shared   import ReadConfigMixin
-from .models    import ActivityUpdate, AgentCode, AgentUpdate, Origin
+from .models    import ActivityState, ActivityUpdate, AgentCode, AgentUpdate
 
 if TYPE_CHECKING:
     from typing      import Callable
     from ..auth.user import User
     from .assistant  import AIAssistant
-    from .models     import UserChatMessage
+    from .models     import ActivityCode, Origin, UserChatMessage
 
 class Stateless(BaseModel):
     """
@@ -42,6 +42,14 @@ This return value determines how the chat manager proceeds:
 
 State = TypeVar("State")
 Agent = TypeVar("Agent")
+
+class CreateActivity(BaseModel):
+    """
+    New activity to be started minus the default values.
+    """
+    activity: ActivityCode
+    title:    str
+    data:     dict
 
 class AgentBase(ABC, Generic[State], ReadConfigMixin):
     """
@@ -128,6 +136,28 @@ class AgentBase(ABC, Generic[State], ReadConfigMixin):
         if len(persona_codes) == 1:
             return persona_codes[0]
 
+    async def process_start_activity(self, activity: ActivityCode, user: User, origin: Origin):
+        """
+        Explicitly start a new activity with an initial default state.  As a consequence the
+        method `create_activity()` of the assistant object must be called to actually create
+        and start the activity. 
+        
+        The use case for this method is to present a list of activities to the user from which
+        one can be started by clicking it. If an activity shall be started in response to the
+        ongoing conversation (while handling a user message) it is usually better to directly
+        call `create_activity()` of the assistant to be able to customize the activity accordingly.
+        """
+        pass
+
+    async def process_activity_update(self, update: ActivityUpdate, user: User, origin: Origin):
+        """
+        Run custom logic after an activity update, e.g. to respond to a change made by the user.
+        Note, that you need to check the `origin` parameter to distinguish updates by the user
+        from your own updates. One action could be to stream a message to the user to further
+        mutate the activity state (using `update_activity()` as usual).
+        """
+        pass
+
     #===============================================
     # Utility methods called by implementing classes
     #===============================================
@@ -156,6 +186,27 @@ class AgentBase(ABC, Generic[State], ReadConfigMixin):
             ),
         )
     
+    async def create_activity(self, create: CreateActivity, user: User):
+        """
+        Create and start a new activity. Us this instead of directly modifying the assistant's
+        activity state to make sure that the creation is propagated to the client and persisted.
+
+        Parameters:
+            activity: Data of the new activity
+            user: Authorized user
+        """
+        await self._assistant.create_activity(
+            user     = user,
+            origin   = "agent",
+            activity = ActivityState(
+                agent    = self.code,
+                activity = create.activity,
+                title    = create.title,
+                status   = "running",
+                data     = create.data,
+            ),
+        )
+
     async def update_activity(self, path: str, value, user: User):
         """
         Update the current activity's shared state, similar to how the agent's state is updated.
@@ -194,15 +245,6 @@ class AgentBase(ABC, Generic[State], ReadConfigMixin):
                 value  = value,
             ),
         )
-    
-    async def process_activity_update(self, update: ActivityUpdate, user: User, origin: Origin):
-        """
-        Run custom logic after an activity update, e.g. to respond to a change made by the user.
-        Note, that you need to check the `origin` parameter to distinguish updates by the user
-        from your own updates. One action could be to stream a message to the user to further
-        mutate the activity state (using `update_activity()` as usual).
-        """
-        pass
 
 class PersonaBase(Generic[Agent]):
     """

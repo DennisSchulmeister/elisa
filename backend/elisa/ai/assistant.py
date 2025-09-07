@@ -19,10 +19,10 @@ from .registry       import AIRegistry
 if TYPE_CHECKING:
     from ..auth.user import User
     from ._agent     import AgentBase
-    from .models     import ActivityId, ActivityState, ActivityUpdate, AgentCode, AgentUpdate
-    from .models     import AssistantChatMessage, ChatKey, ChatMessage, ConversationMemory
-    from .models     import MemoryUpdate, Origin, PersistedState, PersistenceStrategy
-    from .models     import SpeakMessageContent, SystemMessageContent, UserChatMessage
+    from .models     import ActivityCode, ActivityId, ActivityState, ActivityUpdate, AgentCode, AgentUpdate
+    from .models     import AssistantChatMessage, ChatKey, ChatMessage, ConversationMemory, MemoryUpdate
+    from .models     import Origin, PersistedState, PersistenceStrategy, SpeakMessageContent, StartActivity
+    from .models     import SystemMessageContent, UserChatMessage
 
 class AIAssistant:
     """
@@ -204,6 +204,24 @@ class AIAssistant:
         """
         return self._persistence in ["server", "both"]
 
+    def match_current_activity(self, agent: AgentCode = "", activity: ActivityCode = "", activity_id: ActivityId = "") -> bool:
+        """
+        Check if the current activity (if any) matches the given criteria.
+        """
+        if not self.current_activity:
+            return False
+        
+        if agent and not self.current_activity.agent == agent:
+            return False
+        
+        if activity and not self.current_activity.activity == activity:
+            return False
+
+        if activity_id and not self.current_activity.id == activity_id:
+            return False
+
+        return True
+
     #===================================
     # Handle incoming user chat messages
     #===================================
@@ -299,38 +317,56 @@ class AIAssistant:
             ),
         )
 
-    async def start_activity(self, activity_id: ActivityId, user: User, origin: Origin):
+    async def start_activity(self, start: StartActivity, user: User, origin: Origin):
         """
         Start or resume an interactive activity. The activity must already exist, meaning it
         must already have been created by calling `propagate_activity_update()` with an update
         object that contains the initial activity state and no path. Called by either the agent
         or the client.
         """
-        if self.current_activity and self.current_activity.status == "running":
-            await self.propagate_activity_update(
-                user   = user,
-                origin = origin,
-                update = ActivityUpdate(
-                    id    = self.current_activity.id,
-                    path  = "status",
-                    value = "paused",
-                ),
-            )
-        
-        try:
-            self.current_activity = self.state.activities[activity_id]
-        except KeyError:
-            return
-    
         if self.current_activity:
-            await self.propagate_activity_update(
-                user   = user,
-                origin = origin,
-                update = ActivityUpdate(
-                    id    = self.current_activity.id,
-                    path  = "status",
-                    value = "running",
-                ),
+            if self.current_activity.id == start.id:
+                # Activity is already running
+                return
+            elif self.current_activity.status == "running":
+                # Pause other running activity
+                await self.propagate_activity_update(
+                    user   = user,
+                    origin = origin,
+                    update = ActivityUpdate(
+                        id    = self.current_activity.id,
+                        path  = "status",
+                        value = "paused",
+                    ),
+                )
+        
+        if start.id:
+            # Resume previous activity
+            try:
+                self.current_activity = self.state.activities[start.id]
+            except KeyError:
+                return
+        
+            if self.current_activity:
+                await self.propagate_activity_update(
+                    user   = user,
+                    origin = origin,
+                    update = ActivityUpdate(
+                        id    = self.current_activity.id,
+                        path  = "status",
+                        value = "running",
+                    ),
+                )
+        elif start.agent and start.activity:
+            try:
+                self.current_agent = self.agents[start.agent]
+            except KeyError:
+                return
+            
+            await self.current_agent.process_start_activity(
+                activity = start.activity,
+                user     = user,
+                origin   = origin,
             )
 
     async def propagate_activity_update(self, update: ActivityUpdate, user: User, origin: Origin):

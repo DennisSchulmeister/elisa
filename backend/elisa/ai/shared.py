@@ -8,6 +8,8 @@
 
 from __future__ import annotations
 
+short_role_description = "You are ELISA – an interactive learning tutor who supports students in their learning journey."
+
 default_role_description = """
     You are ELISA – an interactive learning tutor who supports students in their learning journey.
 
@@ -24,13 +26,14 @@ default_role_description = """
 """
 
 default_summary_message = """
-    Here is a summary of the conversation so far:
+    Here is a summary of the conversation so far (inside a `<summary` XML element):
     
     <summary>
         {memory.previous}
     </summary>
 
-    Since then the following was additionally said:
+    Since then the following was additionally said. The `<messages>` XML element
+    contains a `<message>` for each message that was written after the summary.
     
     <messages>
         {% for message in memory.messages %}

@@ -201,6 +201,15 @@ ActivityStatus = Literal["created", "running", "paused", "finished"]
 Origin = Literal["user", "agent"]
 """Which side caused an action or update"""
 
+class StartActivity(BaseModel):
+    """
+    Request to start a new activity (using agent code and activity code) or to
+    resume a previous activity (using its id, the other fields may remain empty).
+    """
+    agent:    AgentCode    = ""
+    activity: ActivityCode = ""
+    id:       ActivityId   = ""
+
 class ActivityState(BaseModel):
     """
     Shared state of an interactive activity.

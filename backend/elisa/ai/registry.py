@@ -52,9 +52,9 @@ class AIRegistry(ReadConfigMixin):
 
         cls.Agents = [
             DefaultAgent,
-            # ChoiceAgent,
-            # ExamInterviewAgent,
-            # QuizAgent,
+            ChoiceAgent,
+            ExamInterviewAgent,
+            QuizAgent,
         ]
 
         for agent_class in cls.Agents:

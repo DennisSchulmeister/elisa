@@ -7,7 +7,7 @@
 # License, or (at your option) any later version.
 
 from __future__ import annotations
-from typing     import TYPE_CHECKING
+from typing     import TYPE_CHECKING, override
 
 from ..shared   import default_role_description, default_summary_message
 from .._agent   import AgentBase, Stateless
@@ -26,6 +26,7 @@ class DefaultAgent(AgentBase[Stateless]):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
     
+    @override
     async def process_chat_message(self, msg: UserChatMessage, user: User) -> ProcessChatMessageResult:
         """
         Respond to the given user chat message.

@@ -7,8 +7,15 @@
 # License, or (at your option) any later version.
 
 from __future__ import annotations
+from typing     import TYPE_CHECKING, override
 from pydantic   import BaseModel
 from .._agent   import AgentBase, Stateless
+from ..shared   import default_summary_message
+
+if TYPE_CHECKING:
+    from ...auth.user import User
+    from .._agent     import ProcessChatMessageResult
+    from ..models     import AssistantChatMessage, UserChatMessage, SpeakMessageContent
 
 class QuizQuestion(BaseModel):
     """

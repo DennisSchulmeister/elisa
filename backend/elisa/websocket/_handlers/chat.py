@@ -12,7 +12,7 @@ from typing             import override, TYPE_CHECKING
 
 from ...ai.assistant    import AIAssistant
 from ...ai.callback     import ChatAgentCallback
-from ...ai.models       import ActivityId, ActivityUpdate, PersistedState, PersistenceStrategy, UserChatMessage
+from ...ai.models       import ActivityUpdate, PersistedState, PersistenceStrategy, StartActivity, UserChatMessage
 from ...auth.exceptions import PermissionDenied
 from ._decorators       import handle_message, websocket_handler
 
@@ -38,12 +38,6 @@ class ChangeLanguage(BaseModel):
     so that the AI agent from then on responds in the same language.
     """
     language: str
-
-class StartActivity(BaseModel):
-    """
-    Message sent by the client to start or resume an interactive activity.
-    """
-    id: ActivityId
 
 @websocket_handler
 class ChatHandler(ChatAgentCallback):
@@ -95,7 +89,7 @@ class ChatHandler(ChatAgentCallback):
         Start or resume an interactive activity.
         """
         if self._assistant:
-            await self._assistant.start_activity(start.id, user, "user")
+            await self._assistant.start_activity(start, user, "user")
     
     @handle_message("activity_update", ActivityUpdate)
     async def handle_activity_update(self, update: ActivityUpdate, user: User, **kwargs):
